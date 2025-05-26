@@ -1,0 +1,33 @@
+# LAMMPS Input Script for Molecular Dynamics Simulation
+
+units           lj              # Lennard-Jones units
+dimension       3               # 3D simulation
+boundary        p p p           # Periodic boundary conditions
+atom_style      atomic          # Define atom style
+
+# Create a simulation box and generate atoms
+lattice         fcc 0.844       # Face-centered cubic lattice
+region          box block 0 10 0 10 0 10   # Simulation box size
+create_box      1 box           # Create a box for 1 atom type
+create_atoms    1 box           # Create atoms inside the box
+
+# Define the mass of atom type 1
+mass 1 1.0  # Set the mass of atom type 1
+
+# Define potential for atoms (Lennard-Jones potential)
+pair_style      lj/cut 2.5      # LJ potential with cutoff distance
+pair_coeff      1 1 1.0 1.0 2.5   # Parameters for atom type 1
+
+# Set initial velocities of atoms
+velocity        all create 1.0 12345 loop geom
+
+# Define the integrator and timestep
+fix             1 all nve      # NVE ensemble (constant volume and energy)
+timestep        0.005          # Timestep in femtoseconds
+
+# Output settings
+dump            1 all atom 100 dump.lammps   # Output every 100 steps
+thermo          100            # Output thermodynamic data every 100 steps
+
+# Run the simulation for 10000 steps
+run             10000
